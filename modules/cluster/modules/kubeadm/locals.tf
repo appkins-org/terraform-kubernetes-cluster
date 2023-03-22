@@ -19,6 +19,12 @@ locals {
 
     pod_subnet = lookup(local.cidr_lookup, var.network_plugin, var.pod_subnet)
 
+    local_api_endpoint = var.local_api_endpoint
+
     extra_volumes = null
+
+    root = local.root
   }
+
+  root = var.ssh.user == "root" ? "/root" : "/home/${var.ssh.user}"
 }

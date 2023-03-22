@@ -45,6 +45,12 @@ variable "public_ip" {
   default     = ""
 }
 
+variable "local_api_endpoint" {
+  description = "Local API endpoint for the cluster"
+  type        = string
+  default     = "192.168.50.75"
+}
+
 variable "private_ip" {
   description = "Private IP address for the cluster"
   type        = string

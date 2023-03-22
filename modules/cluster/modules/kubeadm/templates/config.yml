@@ -21,14 +21,18 @@ nodeRegistration:
   criSocket: unix:///var/run/crio/crio.sock
   imagePullPolicy: IfNotPresent
 localAPIEndpoint:
-  advertiseAddress: "192.168.50.75"
+  advertiseAddress: "${local_api_endpoint}"
   bindPort: 6443
 skipPhases:
   - addon/kube-proxy
 ---
 apiServer:
   timeoutForControlPlane: 4m0s
-controllerManager: {}
+controllerManager:
+  extraArgs:
+    cluster-signing-cert-file: ${root}/ca.crt
+    cluster-signing-key-file: ${root}/ca.key
+    enable-hostpath-provisioner: "true"
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
 etcd:

@@ -22,6 +22,55 @@ resource "terraform_data" "install" {
   }
 }
 
+module "certs" {
+  source = "../certs"
+}
+
+resource "terraform_data" "certificates" {
+  input = {
+    ca   = module.certs.ca
+    admin = module.certs.admin
+  }
+  connection {
+    type     = "ssh"
+    user     = var.ssh.user
+    password = var.ssh.password
+    host     = var.ssh.host
+  }
+
+ /*  provisioner "remote-exec" {
+    inline = [
+      "sudo mkdir -p /etc/kubernetes/pki",
+      "sudo chown -R ${var.ssh.user}:sudo /etc/kubernetes"
+    ]
+  } */
+
+  provisioner "file" {
+    content     = module.certs.ca.crt
+    destination = "${local.root}/ca.crt"
+  }
+
+  provisioner "file" {
+    content     = module.certs.ca.key
+    destination = "${local.root}/ca.key"
+  }
+
+  provisioner "file" {
+    content     = module.certs.admin.crt
+    destination = "${local.root}/admin-crt.pem"
+  }
+
+  provisioner "file" {
+    content     = module.certs.admin.key
+    destination = "${local.root}/admin-key.pem"
+  }
+
+  depends_on = [
+    module.certs,
+    terraform_data.install
+  ]
+}
+
 resource "terraform_data" "cluster" {
   input = local.cluster
 
@@ -34,17 +83,21 @@ resource "terraform_data" "cluster" {
 
   provisioner "file" {
     content     = templatefile("${path.module}/templates/config.yml", local.cluster)
-    destination = "/tmp/config.yml"
+    destination = "${local.root}/config.yml"
   }
 
   provisioner "remote-exec" {
     inline = [
       # "sudo kubeadm init --pod-network-cidr=${local.pod_subnet} --upload-certs --cri-socket unix:///var/run/crio/crio.sock --control-plane-endpoint=k8s.appkins.net --skip-phases=addon/kube-proxy",
-      "sudo kubeadm init --config /tmp/config.yml",
+      "sudo kubeadm init --config ${local.root}/config.yml",
+      "sudo kubectl config set-cluster default-cluster --server=https://${var.local_api_endpoint}:6443 --certificate-authority ${local.root}/ca.crt --embed-certs --kubeconfig=/etc/kubernetes/admin.conf",
+      "sudo kubectl config set-credentials default-admin --client-key /etc/kubernetes/pki/admin-key.pem --client-certificate ${local.root}/admin-crt.pem --embed-certs --kubeconfig=/etc/kubernetes/admin.conf",
+      "sudo kubectl config set-context default-system --cluster default-cluster --user default-admin --kubeconfig=/etc/kubernetes/admin.conf",
+      "sudo kubectl config use-context default-system --kubeconfig=/etc/kubernetes/admin.conf"
     ]
   }
-}
 
-output "cluster" {
-  value = terraform_data.cluster.output
+  depends_on = [
+    terraform_data.certificates
+  ]
 }
