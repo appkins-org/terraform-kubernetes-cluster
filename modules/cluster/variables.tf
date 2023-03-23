@@ -49,3 +49,11 @@ variable "ssh" {
     private_key = optional(string, null)
   })
 }
+
+variable "onepassword" {
+  description = "1Password connection details"
+  type = object({
+    credentials = optional(any, null)
+    token       = optional(string, null)
+  })
+}

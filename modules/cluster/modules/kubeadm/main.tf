@@ -81,7 +81,7 @@ resource "shell_script" "kubeadm" {
   }
 
   provisioner "file" {
-    source = "${path.module}/scripts/remote/install.sh"
+    source      = "${path.module}/scripts/remote/install.sh"
     destination = "${local.remote_dir}/install.sh"
   }
 

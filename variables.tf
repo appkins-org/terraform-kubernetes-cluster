@@ -1,17 +1,19 @@
-variable "cluster_id" {
-  description = "Unique identifier for the cluster"
-  type        = string
-  default     = "microk8s"
-  nullable    = false
-}
-
-variable "ssh" {
+variable "cluster" {
+  description = "Cluster configuration."
   type = object({
-    user     = optional(string, "root")
-    password = string
-    host     = string
+    name = optional(string, "kubernetes")
+    id   = optional(number, 1)
+    ssh = object({
+      user        = optional(string, "root")
+      password    = optional(string, null)
+      host        = optional(string, null)
+      private_key = optional(string, null)
+    })
+    onepassword = object({
+      credentials = optional(any, null)
+      token       = optional(string, null)
+    })
   })
-  description = "SSH credentials for the cluster host."
 }
 
 variable "cloudflare" {

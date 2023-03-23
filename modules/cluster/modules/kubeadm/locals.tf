@@ -40,9 +40,9 @@ locals {
 
 
   kube_config = {
-    api_endpoint = shell_script.kubeadm.output["apiendpoint"]
+    api_endpoint           = shell_script.kubeadm.output["apiendpoint"]
     cluster_ca_certificate = shell_script.kubeadm.output["ca"]
-    client_certificate = shell_script.kubeadm.output["clientcert"]
-    client_key = shell_script.kubeadm.output["clientkey"]
+    client_certificate     = shell_script.kubeadm.output["clientcert"]
+    client_key             = shell_script.kubeadm.output["clientkey"]
   }
 }

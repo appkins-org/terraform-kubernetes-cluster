@@ -21,11 +21,11 @@ module "monitoring" {
   depends_on = [module.cert_manager]
 }
 
-module "ingress" {
+/* module "ingress" {
   source = "./modules/ingress"
 
   external_ips = var.ingress.external_ips
   cloudflare   = var.cloudflare
 
   depends_on = [module.cert_manager]
-}
+} */

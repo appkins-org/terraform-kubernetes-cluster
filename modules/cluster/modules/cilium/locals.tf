@@ -36,6 +36,7 @@ locals {
     ingressController = {
       enabled = true
       default = true
+      loadbalancerMode = "shared"
     }
     gatewayAPI = {
       enabled = false

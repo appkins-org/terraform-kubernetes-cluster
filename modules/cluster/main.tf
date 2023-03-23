@@ -20,3 +20,16 @@ module "metallb" {
     module.cilium
   ]
 }
+
+module "onepassword" {
+  source = "./modules/onepassword"
+
+  token = var.onepassword.token
+  credentials = var.onepassword.credentials
+
+  depends_on = [
+    module.kubeadm,
+    module.cilium
+  ]
+
+}
