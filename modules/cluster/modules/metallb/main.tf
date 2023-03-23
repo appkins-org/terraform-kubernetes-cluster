@@ -11,6 +11,8 @@ resource "helm_release" "default" {
   namespace  = "metallb-system"
   version    = "0.13.9"
 
+  atomic = true
+
   depends_on = [kubernetes_namespace.default]
 }
 

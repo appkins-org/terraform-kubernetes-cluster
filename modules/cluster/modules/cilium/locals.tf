@@ -33,5 +33,17 @@ locals {
       }
     }
     tunnel = "vxlan"
+    ingressController = {
+      enabled = true
+      default = true
+    }
+    gatewayAPI = {
+      enabled = false
+    }
+    clustermesh = {
+      config = {
+        enabled = true
+      }
+    }
   }
 }
