@@ -1,6 +1,9 @@
 terraform {
   required_version = ">= 0.13.0"
   required_providers {
+    shell = {
+      source = "scottwinkler/shell"
+    }
     helm = {
       source  = "hashicorp/helm"
       version = ">= 0.1.0"

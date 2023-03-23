@@ -1,4 +1,6 @@
 locals {
+
+  remote_dir = local.root
   cidr_lookup = {
     calico  = "192.168.0.0/16"
     flannel = "10.244.0.0/16"
@@ -29,10 +31,18 @@ locals {
   }
 
   root = var.ssh.user == "root" ? "/root" : "/home/${var.ssh.user}"
-  kube_config = {
+  /* kube_config = {
     api_endpoint = data.external.kube_config.result["apiendpoint"]
     cluster_ca_certificate = data.external.kube_config.result["ca"]
     client_certificate = data.external.kube_config.result["clientcert"]
     client_key = data.external.kube_config.result["clientkey"]
+  } */
+
+
+  kube_config = {
+    api_endpoint = shell_script.kubeadm.output["apiendpoint"]
+    cluster_ca_certificate = shell_script.kubeadm.output["ca"]
+    client_certificate = shell_script.kubeadm.output["clientcert"]
+    client_key = shell_script.kubeadm.output["clientkey"]
   }
 }

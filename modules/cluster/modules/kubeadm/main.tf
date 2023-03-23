@@ -4,7 +4,7 @@ resource "random_string" "tokens" {
   special = false
 }
 
-resource "terraform_data" "install" {
+/* resource "terraform_data" "install" {
   input = local.cluster
 
   connection {
@@ -21,7 +21,7 @@ resource "terraform_data" "install" {
       "${path.module}/scripts/install-kubeadm.sh"
     ]
   }
-}
+} */
 
 # module "certs" {
 #   source = "../certs"
@@ -66,7 +66,43 @@ resource "terraform_data" "install" {
 #   ]
 # }
 
-resource "terraform_data" "cluster" {
+resource "shell_script" "kubeadm" {
+  connection {
+    type        = "ssh"
+    user        = var.ssh.user
+    private_key = var.ssh.private_key
+    password    = var.ssh.password
+    host        = var.ssh.host
+  }
+
+  provisioner "file" {
+    content     = templatefile("${path.module}/templates/config.yml", local.cluster)
+    destination = "${local.remote_dir}/config.yml"
+  }
+
+  provisioner "file" {
+    source = "${path.module}/scripts/remote/install.sh"
+    destination = "${local.remote_dir}/install.sh"
+  }
+
+  lifecycle_commands {
+    create = file("${path.module}/scripts/create.sh")
+    read   = file("${path.module}/scripts/read.sh")
+    update = file("${path.module}/scripts/update.sh")
+    delete = file("${path.module}/scripts/delete.sh")
+  }
+
+  environment = {
+    REMOTE_DIR = local.remote_dir
+  }
+
+  sensitive_environment = {
+    SSH_USER = var.ssh.user
+    SSH_HOST = var.ssh.host
+  }
+}
+
+/* resource "terraform_data" "cluster" {
   input = local.cluster
 
   connection {
@@ -109,4 +145,4 @@ data "external" "kube_config" {
   depends_on = [
     terraform_data.cluster
   ]
-}
+} */

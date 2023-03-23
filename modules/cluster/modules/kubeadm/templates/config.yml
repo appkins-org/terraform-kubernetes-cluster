@@ -30,8 +30,6 @@ apiServer:
   timeoutForControlPlane: 4m0s
 controllerManager:
   extraArgs:
-    cluster-signing-cert-file: ${root}/ca.crt
-    cluster-signing-key-file: ${root}/ca.key
     enable-hostpath-provisioner: "true"
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration

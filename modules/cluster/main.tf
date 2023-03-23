@@ -4,19 +4,19 @@ module "kubeadm" {
   ssh = var.ssh
 }
 
-module "metallb" {
-  source = "./modules/metallb"
+module "cilium" {
+  source = "./modules/cilium"
 
   depends_on = [
     module.kubeadm
   ]
 }
 
-module "cilium" {
-  source = "./modules/cilium"
+module "metallb" {
+  source = "./modules/metallb"
 
   depends_on = [
     module.kubeadm,
-    module.metallb
+    module.cilium
   ]
 }

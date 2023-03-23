@@ -12,6 +12,6 @@ module "cluster" {
   }
 }
 
-output "kube_config" {
-  value = module.cluster.kube_config
+output "cluster" {
+  value = module.cluster
 }

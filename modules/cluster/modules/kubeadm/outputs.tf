@@ -14,10 +14,7 @@ output "api_endpoint" {
   value = local.kube_config.api_endpoint
 }
 
-output "cluster" {
+/* output "cluster" {
   value = terraform_data.cluster.output
 }
-
-output "kube_config" {
-  value = data.external.kube_config.result
-}
+ */
