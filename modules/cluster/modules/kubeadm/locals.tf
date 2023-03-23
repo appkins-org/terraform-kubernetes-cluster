@@ -24,7 +24,15 @@ locals {
     extra_volumes = null
 
     root = local.root
+
+    node_name = "bigboi"
   }
 
   root = var.ssh.user == "root" ? "/root" : "/home/${var.ssh.user}"
+  kube_config = {
+    api_endpoint = data.external.kube_config.result["apiendpoint"]
+    cluster_ca_certificate = data.external.kube_config.result["ca"]
+    client_certificate = data.external.kube_config.result["clientcert"]
+    client_key = data.external.kube_config.result["clientkey"]
+  }
 }

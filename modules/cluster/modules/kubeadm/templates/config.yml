@@ -17,7 +17,7 @@ bootstrapTokens:
     groups:
       - system:bootstrappers:kubeadm:default-node-token
 nodeRegistration:
-  name: node
+  name: ${node_name}
   criSocket: unix:///var/run/crio/crio.sock
   imagePullPolicy: IfNotPresent
 localAPIEndpoint:

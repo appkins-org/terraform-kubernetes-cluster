@@ -60,9 +60,10 @@ variable "private_ip" {
 variable "ssh" {
   description = "SSH connection details"
   type = object({
-    user     = optional(string, "terraform")
-    password = optional(string, null)
-    host     = optional(string, null)
+    user        = optional(string, null)
+    password    = optional(string, null)
+    host        = optional(string, null)
+    private_key = optional(string, null)
   })
   default = {}
 }
