@@ -1,3 +1,14 @@
+resource "kubernetes_config_map" "bgp_config" {
+  metadata {
+    name = "bgp-config"
+    namespace = "kube-system"
+  }
+
+  data = {
+    "config.yaml" = yamlencode(local.bgp_config)
+  }
+}
+
 resource "helm_release" "default" {
   name       = "cilium"
   repository = "https://helm.cilium.io/"
@@ -8,4 +19,14 @@ resource "helm_release" "default" {
   values = [
     yamlencode(local.values)
   ]
+
+  depends_on = [
+    kubernetes_config_map.bgp_config
+  ]
+}
+
+resource "kubectl_manifest" "pools" {
+  yaml_body = yamlencode(local.pools)
+
+  depends_on = [helm_release.default]
 }

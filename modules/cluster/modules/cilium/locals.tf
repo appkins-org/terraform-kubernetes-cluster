@@ -1,6 +1,38 @@
 locals {
+
+  pools = {
+    apiVersion = "cilium.io/v2alpha1"
+    kind = "CiliumLoadBalancerIPPool"
+    metadata = {
+      name = "default"
+    }
+    spec = {
+      cidrs = [{ cidr = "10.0.10.0/24" }]
+    }
+  }
+
+  bgp_config = {
+    peers = [{
+      peer-address = "172.17.9.200"
+      peer-asn = 64512
+      my-asn = 64513
+    }]
+    address-pools = [{
+      name = "default"
+      protocol = "bgp"
+      addresses = ["192.168.50.75-192.168.50.77"]
+    }]
+  }
   values = {
-    bpf          = { masquerade = true }
+   bgp = {
+      enabled = true
+      announce = {
+        loadbalancerIP = true
+        podCIDR        = true
+      }
+    }
+    bgpControlPlane = { enabled = true }
+    bpf          = { masquerade = true, lbExternalClusterIP = true }
     externalIPs  = { enabled = true }
     nodePort     = { enabled = true }
     image        = { pullPolicy = "IfNotPresent" }
@@ -23,6 +55,7 @@ locals {
     kubeProxyReplacement = "strict"
     operator = {
       replicas = 1
+      prometheus = { enabled = true }
     }
     serviceAccounts = {
       cilium = {
@@ -46,5 +79,6 @@ locals {
         enabled = true
       }
     }
+    prometheus = { enabled = true }
   }
 }

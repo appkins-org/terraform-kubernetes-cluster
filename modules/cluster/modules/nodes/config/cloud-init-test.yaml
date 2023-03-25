@@ -1,0 +1,25 @@
+apt:
+  preserve_sources_list: true
+  sources:
+    kubernetes.list:
+      source: "deb [signed-by=$KEY_FILE] https://apt.kubernetes.io/ kubernetes-xenial main"
+      keyid: "B53DC80D13EDEF05"
+      keyserver: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    libcontainers.list:
+      source: "deb [signed-by=$KEY_FILE] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Testing/ /"
+      keyid: "4D64390375060AA4"
+      keyserver: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Testing/Release.key"
+    cri-o.list:
+      source: "deb [signed-by=$KEY_FILE] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.17/Debian_Testing/ /"
+      keyid: "4D64390375060AA4"
+      keyserver: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.17/Debian_Testing/Release.key"
+packages:
+  - [kubelet, kubeadm, kubectl]
+  - [cri-o, cri-o-runc]
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+runcmd:
+  - [ sh, -c, modprobe overlay ]
+  - [ sh, -xc, "echo $(date) ': hello world!'" ]
+  - [ sh, -c, echo "=========hello world=========" ]

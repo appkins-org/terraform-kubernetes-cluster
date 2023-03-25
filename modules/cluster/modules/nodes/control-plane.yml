@@ -1,0 +1,24 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+nodeRegistration:
+  name: bigboi
+  criSocket: unix:///var/run/crio/crio.sock
+  imagePullPolicy: IfNotPresent
+localAPIEndpoint:
+  advertiseAddress: "192.168.50.75"
+  bindPort: 6443
+skipPhases:
+  - addon/kube-proxy
+---
+controllerManager:
+  extraArgs:
+    enable-hostpath-provisioner: "true"
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+networking:
+  podSubnet: 10.217.0.0/16
+kubernetesVersion: v1.26.0
+controlPlaneEndpoint: "k8s.appkins.net"
+scheduler: {}
+imageRepository: registry.k8s.io
+clusterName: kubernetes

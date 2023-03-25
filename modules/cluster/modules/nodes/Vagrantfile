@@ -1,0 +1,110 @@
+require 'yaml'
+
+settings = YAML.load_file(File.join(File.dirname(__FILE__), 'settings.yaml'))
+
+Vagrant.configure("2") do |config|
+  config.vagrant.plugins = ["vagrant-libvirt"]
+
+  config.ssh.forward_env = ["DOMAIN"]
+
+  # Options for Libvirt Vagrant provider.
+  config.vm.provider :libvirt do |lv|
+    lv.host = settings["domain"]
+    lv.connect_via_ssh = true
+    lv.username = "root"
+    #lv.password = "secret"
+    lv.storage_pool_name = "default"
+    lv.default_prefix = 'kubernetes-'
+    lv.graphics_type = "none"
+    lv.video_type = "none"
+  end
+
+  config.vm.provision "shell",
+    path: "provision.sh"
+
+  ###
+  # Control plane
+  config.vm.define "control-plane" do |node|
+    # Base box
+    node.vm.box = "debian/testing64"
+
+    node.vm.provision "file", source: "control-plane.yml", destination: "config.yml"
+
+    node.vm.provision "shell" do |s|
+      s.inline = <<-EOF
+      kubeadm init --pod-network-cidr #{settings["pod_cidr"]} \
+                   --token #{settings["token"]} \
+                   --apiserver-advertise-address #{settings["master_ip"]} \
+                   --skip-phases "addon/kube-proxy" \
+                   --cri-socket unix:///var/run/crio/crio.sock
+      cp /etc/kubernetes/admin.conf /vagrant/
+      kubeadm token create --print-join-command > /vagrant/join.sh
+      sudo chmod -R 777 /vagrant/
+      EOF
+    end
+
+    node.trigger.after :up do |trigger|
+      trigger.warn = "Dumping database to /vagrant/outfile"
+      trigger.run_remote = {inline: "KUBECONFIG=\"/etc/kubernetes/admin.conf\" kubectl config view --flatten -o json"}
+    end
+
+    config.vm.hostname = "k8s.#{settings['domain']}"
+
+    node.vm.network :forwarded_port, guest: 6443, host: 6443
+    node.vm.network :private_network,
+      :libvirt__domain_name => "cluster.local",
+      :ip => "10.20.5.0"
+      #:libvirt__tunnel_type => "server",
+      #:libvirt__tunnel_port => '6443'
+
+    node.vm.provider :libvirt do |domain|
+      domain.memory = 2048
+      domain.cpus = 2
+    end
+  end
+
+  settings['workers'].each do |workers|
+    config.vm.define workers["name"] do |worker|
+      # Base box
+      worker.vm.box = "debian/testing64"
+      #worker.vm.box = "generic/ubuntu2204"
+
+      worker.vm.provision "shell" do |s|
+        s.inline = <<-EOF
+        sh /vagrant/join.sh
+        EOF
+        #kubeadm join #{ENV["MASTER_IP"]}:6443 \
+        #  --token #{ENV["TOKEN"]} \
+        #  --discovery-token-unsafe-skip-ca-verification \
+        #  --cri-socket unix:///var/run/crio/crio.sock
+        # EOF
+      end
+
+      worker.vm.network :private_network,
+        :ip => workers["ip"]
+      #  :libvirt__tunnel_type => "client",
+      #  :libvirt__tunnel_port => '6443'
+
+      #worker.vm.network :public_network,
+      #  :ip => "192.168.50.#{i+75}", :dev => "eno#{i+1}"
+
+      worker.vm.provider :libvirt do |sys|
+        sys.memory = 2048
+        sys.cpus = 2
+      end
+    end
+  end
+
+  config.vm.network :public_network,
+   :ip => settings["master_ip"],
+   :hostname => true,
+   :dev => 'eno1'
+
+  config.vm.cloud_init do |cloud_init|
+    # With Ubuntu cloud images you have to use cloud_init to get an access
+    cloud_init.content_type = "text/cloud-config"
+    cloud_init.path = "config/cloud-init-test.yaml"
+  end
+
+  config.vm.synced_folder "./scripts", "/vagrant", type: "nfs"
+end

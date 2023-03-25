@@ -12,14 +12,14 @@ module "cilium" {
   ]
 }
 
-module "metallb" {
+/* module "metallb" {
   source = "./modules/metallb"
 
   depends_on = [
     module.kubeadm,
     module.cilium
   ]
-}
+} */
 
 module "onepassword" {
   source = "./modules/onepassword"
