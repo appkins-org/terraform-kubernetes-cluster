@@ -1,0 +1,12 @@
+helm upgrade cilium cilium/cilium --install \
+	--version 1.13.1 \
+	--namespace kube-system \
+	--set image.pullPolicy=IfNotPresent \
+	--set ipam.mode=kubernetes \
+	--set operator.replicas=1 \
+	--set bgp.enabled=true \
+	--set bgp.announce.loadbalancerIP=true \
+	--set bgp.announce.podCIDR=true \
+	--set kubeProxyReplacement=strict \
+	--set k8sServiceHost=kind-control-plane \
+	--set k8sServicePort=6443

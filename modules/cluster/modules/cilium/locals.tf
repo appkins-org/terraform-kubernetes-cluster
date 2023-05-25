@@ -4,10 +4,16 @@ locals {
     apiVersion = "cilium.io/v2alpha1"
     kind = "CiliumLoadBalancerIPPool"
     metadata = {
-      name = "default"
+      name = "cilium"
     }
     spec = {
+      disabled = false
       cidrs = [{ cidr = "10.0.10.0/24" }]
+      serviceSelector = {
+        matchLabels = {
+          "app.kubernetes.io/name" = "cilium"
+        }
+      }
     }
   }
 

@@ -1,19 +1,30 @@
+variable "network_plugin" {
+  description = "Network plugin to use"
+  type        = string
+  default     = "cilium"
+
+  validation {
+    condition     = contains(["cilium", "calico"], var.network_plugin)
+    error_message = "Network plugin must be one of: cilium, calico"
+  }
+}
+
 variable "pod_subnet" {
   description = "Pod subnet for the cluster"
   type        = string
-  default     = "10.244.0.0/24"
+  default     = "10.217.0.0/16"
 }
 
 variable "cluster_id" {
   description = "Unique identifier for the cluster"
   type        = string
-  default     = "microk8s"
+  default     = "kubernetes"
 }
 
 variable "cluster_version" {
   description = "Version of Kubernetes to install"
   type        = string
-  default     = "v1.21.0"
+  default     = "v1.26.0"
 }
 
 variable "organization" {
@@ -34,6 +45,12 @@ variable "public_ip" {
   default     = ""
 }
 
+variable "local_api_endpoint" {
+  description = "Local API endpoint for the cluster"
+  type        = string
+  default     = "192.168.50.75"
+}
+
 variable "private_ip" {
   description = "Private IP address for the cluster"
   type        = string
@@ -48,13 +65,5 @@ variable "ssh" {
     host        = optional(string, null)
     private_key = optional(string, null)
   })
-}
-
-variable "onepassword" {
-  description = "1Password connection details"
-  type = object({
-    credentials = optional(any, null)
-    token       = optional(string, null)
-  })
-  default = null
+  default = {}
 }
