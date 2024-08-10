@@ -1,0 +1,57 @@
+locals {
+  cluster_config = {
+    apiServer = {
+      timeoutForControlPlane = "4m0s"
+    }
+    controllerManager = {
+      extraArgs = {
+        enable-hostpath-provisioner = "true"
+      }
+    }
+    apiVersion = "kubeadm.k8s.io/v1beta3"
+    kind       = "ClusterConfiguration"
+    etcd = {
+      local = {
+        dataDir = "/var/lib/etcd"
+      }
+    }
+    networking = {
+      serviceSubnet = "10.96.0.0/12"
+      podSubnet     = var.pod_subnet
+      dnsDomain     = "cluster.local"
+    }
+    kubernetesVersion    = var.version
+    controlPlaneEndpoint = "k8s.appkins.net"
+    scheduler            = {}
+    certificatesDir      = "/etc/kubernetes/pki"
+    imageRepository      = "registry.k8s.io"
+    clusterName          = var.id
+  }
+  init_config = {
+    apiVersion = "kubeadm.k8s.io/v1beta3"
+    kind       = "InitConfiguration"
+    bootstrapTokens = [{
+      token       = var.bootstrap_token
+      description = "kubeadm bootstrap token"
+      ttl         = "24h"
+      usages      = ["authentication", "signing"]
+      groups      = ["system:bootstrappers:kubeadm:default-node-token"]
+      }, {
+      token       = var.admin_token
+      description = "admin token"
+      ttl         = "0"
+      usages      = ["authentication", "signing"]
+      groups      = ["system:bootstrappers:kubeadm:default-node-token"]
+    }]
+    nodeRegistration = {
+      name            = var.node_name
+      criSocket       = "unix:///var/run/crio/crio.sock"
+      imagePullPolicy = "IfNotPresent"
+    }
+    localAPIEndpoint = {
+      advertiseAddress = "${local_api_endpoint}"
+      bindPort         = 6443
+    }
+    skipPhases = ["addon/kube-proxy"]
+  }
+}

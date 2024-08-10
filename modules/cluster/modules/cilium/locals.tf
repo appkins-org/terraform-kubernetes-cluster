@@ -2,13 +2,13 @@ locals {
 
   pools = {
     apiVersion = "cilium.io/v2alpha1"
-    kind = "CiliumLoadBalancerIPPool"
+    kind       = "CiliumLoadBalancerIPPool"
     metadata = {
       name = "cilium"
     }
     spec = {
       disabled = false
-      cidrs = [{ cidr = "10.0.10.0/24" }]
+      cidrs    = [{ cidr = "10.0.10.0/24" }]
       serviceSelector = {
         matchLabels = {
           "app.kubernetes.io/name" = "cilium"
@@ -20,17 +20,17 @@ locals {
   bgp_config = {
     peers = [{
       peer-address = "172.17.9.200"
-      peer-asn = 64512
-      my-asn = 64513
+      peer-asn     = 64512
+      my-asn       = 64513
     }]
     address-pools = [{
-      name = "default"
-      protocol = "bgp"
+      name      = "default"
+      protocol  = "bgp"
       addresses = ["192.168.50.75-192.168.50.77"]
     }]
   }
   values = {
-   bgp = {
+    bgp = {
       enabled = true
       announce = {
         loadbalancerIP = true
@@ -38,13 +38,13 @@ locals {
       }
     }
     bgpControlPlane = { enabled = true }
-    bpf          = { masquerade = true, lbExternalClusterIP = true }
-    externalIPs  = { enabled = true }
-    nodePort     = { enabled = true }
-    image        = { pullPolicy = "IfNotPresent" }
-    ipam         = { mode = "kubernetes" }
-    hostServices = { enabled = true }
-    hostPort     = { enabled = true }
+    bpf             = { masquerade = true, lbExternalClusterIP = true }
+    externalIPs     = { enabled = true }
+    nodePort        = { enabled = true }
+    image           = { pullPolicy = "IfNotPresent" }
+    ipam            = { mode = "kubernetes" }
+    hostServices    = { enabled = true }
+    hostPort        = { enabled = true }
     hubble = {
       enabled = true
       relay   = { enabled = true, replicas = 1 }
@@ -60,7 +60,7 @@ locals {
     k8sServicePort       = 6443
     kubeProxyReplacement = "strict"
     operator = {
-      replicas = 1
+      replicas   = 1
       prometheus = { enabled = true }
     }
     serviceAccounts = {
@@ -73,8 +73,8 @@ locals {
     }
     tunnel = "vxlan"
     ingressController = {
-      enabled = true
-      default = true
+      enabled          = true
+      default          = true
       loadbalancerMode = "shared"
     }
     gatewayAPI = {

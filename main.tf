@@ -1,7 +1,7 @@
 module "cluster" {
   source = "./modules/cluster"
 
-  ssh = var.cluster.ssh
+  ssh         = var.cluster.ssh
   onepassword = var.cluster.onepassword
 }
 

@@ -26,7 +26,7 @@ module "onepassword" {
 
   source = "./modules/onepassword"
 
-  token = var.onepassword.token
+  token       = var.onepassword.token
   credentials = var.onepassword.credentials
 
   depends_on = [

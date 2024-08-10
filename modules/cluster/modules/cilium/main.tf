@@ -1,6 +1,6 @@
 resource "kubernetes_config_map" "bgp_config" {
   metadata {
-    name = "bgp-config"
+    name      = "bgp-config"
     namespace = "kube-system"
   }
 

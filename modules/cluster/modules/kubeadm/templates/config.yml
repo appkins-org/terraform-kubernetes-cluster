@@ -26,11 +26,6 @@ localAPIEndpoint:
 skipPhases:
   - addon/kube-proxy
 ---
-apiServer:
-  timeoutForControlPlane: 4m0s
-controllerManager:
-  extraArgs:
-    enable-hostpath-provisioner: "true"
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
 etcd:
@@ -40,6 +35,11 @@ networking:
   serviceSubnet: 10.96.0.0/12
   podSubnet: ${pod_subnet}
   dnsDomain: "cluster.local"
+apiServer:
+  timeoutForControlPlane: 4m0s
+controllerManager:
+  extraArgs:
+    enable-hostpath-provisioner: "true"
 kubernetesVersion: ${version}
 controlPlaneEndpoint: "k8s.appkins.net"
 scheduler: {}

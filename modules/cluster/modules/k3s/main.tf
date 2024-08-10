@@ -18,7 +18,7 @@ resource "shell_script" "default" {
   }
 
   provisioner "file" {
-    content      = data.http.install.response_body
+    content     = data.http.install.response_body
     destination = "${local.remote_dir}/install.sh"
   }
 
