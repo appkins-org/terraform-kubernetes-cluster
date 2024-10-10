@@ -1,18 +1,3 @@
-variable "cluster_domain" {
-  type        = string
-  description = "The domain name of the cluster"
-  default     = "appkins.net"
-}
-
-variable "github" {
-  type = object({
-    client_id     = string
-    client_secret = string
-    org           = string
-  })
-  description = "GitHub OAuth configuration"
-}
-
 variable "applications" {
   description = "tpl"
   type = list(
@@ -69,6 +54,7 @@ variable "applications" {
   )
   default = []
 }
+
 variable "applicationsets" {
   description = "tpl"
   type = list(
@@ -137,6 +123,13 @@ variable "applicationsets" {
   )
   default = []
 }
+
+variable "cluster_domain" {
+  type        = string
+  description = "The domain name of the cluster"
+  default     = "appkins.net"
+}
+
 variable "extensions" {
   description = "tpl"
   type = list(object({
@@ -158,6 +151,16 @@ variable "extensions" {
   )
   default = []
 }
+
+variable "github" {
+  type = object({
+    client_id     = string
+    client_secret = string
+    org           = string
+  })
+  description = "GitHub OAuth configuration"
+}
+
 variable "projects" {
   description = "tpl"
   type = list(

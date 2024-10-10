@@ -1,9 +1,3 @@
-variable "cluster_id" {
-  description = "Unique identifier for the cluster"
-  type        = string
-  default     = "microk8s"
-}
-
 variable "cloudflare" {
   type = object({
     api_key = string
@@ -12,6 +6,12 @@ variable "cloudflare" {
     domain  = string
   })
   description = "(optional) describe your variable"
+}
+
+variable "cluster_id" {
+  description = "Unique identifier for the cluster"
+  type        = string
+  default     = "microk8s"
 }
 
 variable "ingress" {

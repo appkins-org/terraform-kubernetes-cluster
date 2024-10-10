@@ -1,20 +1,3 @@
-variable "network_plugin" {
-  description = "Network plugin to use"
-  type        = string
-  default     = "cilium"
-
-  validation {
-    condition     = contains(["cilium", "calico"], var.network_plugin)
-    error_message = "Network plugin must be one of: cilium, calico"
-  }
-}
-
-variable "pod_subnet" {
-  description = "Pod subnet for the cluster"
-  type        = string
-  default     = "10.217.0.0/16"
-}
-
 variable "cluster_id" {
   description = "Unique identifier for the cluster"
   type        = string
@@ -27,22 +10,10 @@ variable "cluster_version" {
   default     = "v1.26.0"
 }
 
-variable "organization" {
-  description = "Organization name for the cluster"
-  type        = string
-  default     = "appkins"
-}
-
 variable "domain" {
   description = "Domain name for the cluster"
   type        = string
   default     = "appkins.net"
-}
-
-variable "public_ip" {
-  description = "Public IP address for the cluster"
-  type        = string
-  default     = ""
 }
 
 variable "local_api_endpoint" {
@@ -51,8 +22,37 @@ variable "local_api_endpoint" {
   default     = "192.168.50.75"
 }
 
+variable "network_plugin" {
+  description = "Network plugin to use"
+  type        = string
+  default     = "cilium"
+
+  validation {
+    condition     = contains(["cilium", "calico"], var.network_plugin)
+    error_message = "Network plugin must be one of: cilium, calico"
+  }
+}
+
+variable "organization" {
+  description = "Organization name for the cluster"
+  type        = string
+  default     = "appkins"
+}
+
+variable "pod_subnet" {
+  description = "Pod subnet for the cluster"
+  type        = string
+  default     = "10.217.0.0/16"
+}
+
 variable "private_ip" {
   description = "Private IP address for the cluster"
+  type        = string
+  default     = ""
+}
+
+variable "public_ip" {
+  description = "Public IP address for the cluster"
   type        = string
   default     = ""
 }
