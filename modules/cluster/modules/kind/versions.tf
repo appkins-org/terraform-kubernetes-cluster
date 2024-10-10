@@ -8,9 +8,7 @@ terraform {
       source  = "kyma-incubator/kind"
       version = "0.0.11"
     }
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-    }
+    kubernetes = { source = "hashicorp/kubernetes" }
   }
   required_version = ">= 0.13"
 }

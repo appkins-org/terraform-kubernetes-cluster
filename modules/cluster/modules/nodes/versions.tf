@@ -1,7 +1,5 @@
 terraform {
   required_providers {
-    vagrant = {
-      source = "bmatcuk/vagrant"
-    }
+    vagrant = { source = "bmatcuk/vagrant" }
   }
 }

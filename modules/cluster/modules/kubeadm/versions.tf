@@ -1,7 +1,5 @@
 terraform {
   required_providers {
-    shell = {
-      source = "scottwinkler/shell"
-    }
+    shell = { source = "scottwinkler/shell" }
   }
 }
